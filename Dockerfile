@@ -10,6 +10,9 @@ ARG APP_VERSION=0.1.0
 # Copy the current directory contents into the container at /app
 COPY . /app
 
+# Install Service Bus dependencies (ensure your Go project includes this dependency)
+RUN go mod init makeline-service && go mod tidy && go get -u github.com/Azure/azure-service-bus-go
+
 # Build the Go app
 RUN go build -ldflags "-X main.version=$APP_VERSION" -o main .
 
@@ -24,8 +27,10 @@ COPY --from=builder /app/main .
 # Expose port 3001 for the container
 EXPOSE 3001
 
-# Set the environment variable for the app version number
+# Pass environment variables for Service Bus
 ENV APP_VERSION=$APP_VERSION
+ENV SERVICE_BUS_CONNECTION_STRING=""
+ENV QUEUE_NAME=""
 
 # Run the Go app when the container starts
 CMD ["./main"]
