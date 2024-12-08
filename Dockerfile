@@ -10,8 +10,8 @@ ARG APP_VERSION=0.1.0
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Install Service Bus dependencies (ensure your Go project includes this dependency)
-RUN go mod init makeline-service && go mod tidy && go get -u github.com/Azure/azure-service-bus-go
+# Ensure Go dependencies are installed and updated
+RUN go mod tidy && go get -u github.com/Azure/azure-service-bus-go
 
 # Build the Go app
 RUN go build -ldflags "-X main.version=$APP_VERSION" -o main .
